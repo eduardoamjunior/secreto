@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #000;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .heart-container {
+            position: relative;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .heart {
+            width: 80px;
+            height: 80px;
+            background: #ff0066;
+            position: relative;
+            transform: rotate(-45deg);
+            transition: all 0.3s ease;
+        }
+
+        .heart:before,
+        .heart:after {
+            content: '';
+            width: 80px;
+            height: 80px;
+            position: absolute;
+            left: 50px;
+            top: 0;
+            background: #ff0066;
+            border-radius: 50px;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .heart:after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        .heart.beating {
+            animation: heartbeat 0.6s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: rotate(-45deg) scale(1); }
+            50% { transform: rotate(-45deg) scale(1.2); }
+            100% { transform: rotate(-45deg) scale(1); }
+        }
+
+        .heart.exploding {
+            animation: explode 2s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: rotate(-45deg) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: rotate(-45deg) scale(8);
+                opacity: 0.8;
+            }
+            100% {
+                transform: rotate(-45deg) scale(15);
+                opacity: 0;
+            }
+        }
+
+        .message-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            z-index: 5;
+            background: rgba(0,0,0,0.7);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .message-container.show {
+            animation: fadeIn 2s ease-out 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .greeting {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ff0066;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .nickname {
+            font-size: 2.5rem;
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('shrejk.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            z-index: 2;
+        }
+
+        .background-image.show {
+            animation: backgroundFade 2s ease-out 2s forwards;
+        }
+
+        @keyframes backgroundFade {
+            from { opacity: 0; }
+            to { opacity: 0.4; }
+        }
+
+        /* Ajustes para telas menores */
+        @media (max-width: 480px) {
+            .greeting {
+                font-size: 2.5rem;
+            }
+            
+            .nickname {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="heart-container" id="heartContainer">
+        <div class="heart" id="heart"></div>
+    </div>
+
+    <div class="message-container" id="messageContainer">
+        <div class="greeting" id="greeting"></div>
+        <div class="nickname" id="nickname"></div>
+    </div>
+
+    <div class="background-image" id="backgroundImage"></div>
+
+    <script>
+        const heart = document.getElementById('heart');
+        const heartContainer = document.getElementById('heartContainer');
+        const messageContainer = document.getElementById('messageContainer');
+        const backgroundImage = document.getElementById('backgroundImage');
+        const greeting = document.getElementById('greeting');
+        const nickname = document.getElementById('nickname');
+
+        // Frases carinhosas aleatórias
+        const nicknames = [
+            "Princesa",
+            "Rainha",
+            "Gatinha",
+        ];
+
+        // Função para obter saudação baseada no horário
+        function getGreeting() {
+            const hour = new Date().getHours();
+            
+            if (hour >= 5 && hour < 12) {
+                return "Bom dia,";
+            } else if (hour >= 12 && hour < 18) {
+                return "Boa tarde,";
+            } else {
+                return "Boa noite,";
+            }
+        }
+
+        // Função para escolher frase aleatória
+        function getRandomNickname() {
+            return nicknames[Math.floor(Math.random() * nicknames.length)];
+        }
+
+        // Efeito de batimento do coração ao passar o mouse
+        heartContainer.addEventListener('mouseenter', () => {
+            heart.classList.add('beating');
+        });
+
+        heartContainer.addEventListener('mouseleave', () => {
+            heart.classList.remove('beating');
+        });
+
+        // Animação principal ao clicar
+        heartContainer.addEventListener('click', () => {
+            // Remove o cursor pointer
+            heartContainer.style.cursor = 'default';
+            
+            // Inicia a animação de explosão
+            heart.classList.add('exploding');
+            
+            // Define as mensagens
+            greeting.textContent = getGreeting();
+            nickname.textContent = getRandomNickname();
+            
+            // Mostra a mensagem após 1.5s
+            setTimeout(() => {
+                messageContainer.classList.add('show');
+                backgroundImage.classList.add('show');
+            }, 1500);
+            
+            // Remove o container do coração após a animação
+            setTimeout(() => {
+                heartContainer.style.display = 'none';
+            }, 2000);
+        });
+
+        // Adiciona efeito de toque para mobile
+        heartContainer.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            heart.classList.add('beating');
+        });
+
+        heartContainer.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            heart.classList.remove('beating');
+        });
+    </script>
+</body>
+</html>
