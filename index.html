@@ -26,9 +26,7 @@
             cursor: pointer;
             z-index: 10;
             padding: 20px;
-            /* Aumenta a área clicável */
             -webkit-tap-highlight-color: transparent;
-            /* Remove o highlight azul no iOS */
         }
 
         .heart {
@@ -40,7 +38,6 @@
             justify-content: center;
             align-items: center;
             pointer-events: none;
-            /* Evita conflitos de eventos */
         }
 
         .heart svg {
@@ -141,8 +138,6 @@
             from { opacity: 0; }
             to { opacity: 0.9; }
         }
-
-        /* Ajustes para telas menores */
         @media (max-width: 480px) {
             .greeting {
                 font-size: 2.5rem;
@@ -154,7 +149,6 @@
             
             .heart-container {
                 padding: 30px;
-                /* Área ainda maior para mobile */
             }
         }
     </style>
@@ -182,18 +176,14 @@
         const backgroundImage = document.getElementById('backgroundImage');
         const greeting = document.getElementById('greeting');
         const nickname = document.getElementById('nickname');
-
-        // Frases carinhosas aleatórias
         const nicknames = [
             "Princesa",
             "Rainha",
             "Gatinha",
+            "Meu biscoito de gengibre",
+            "Nobre dama",
         ];
-
-        // Variável para controlar se já foi clicado
         let hasBeenClicked = false;
-
-        // Função para obter saudação baseada no horário
         function getGreeting() {
             const hour = new Date().getHours();
             
@@ -205,40 +195,28 @@
                 return "Boa noite,";
             }
         }
-
-        // Função para escolher frase aleatória
         function getRandomNickname() {
             return nicknames[Math.floor(Math.random() * nicknames.length)];
         }
 
-        // Função principal que executa a animação
         function triggerAnimation() {
             if (hasBeenClicked) return;
             hasBeenClicked = true;
             
-            // Remove o cursor pointer
             heartContainer.style.cursor = 'default';
-            
-            // Inicia a animação de explosão
             heart.classList.add('exploding');
             
-            // Define as mensagens
             greeting.textContent = getGreeting();
             nickname.textContent = getRandomNickname();
             
-            // Mostra a mensagem após 1.5s
             setTimeout(() => {
                 messageContainer.classList.add('show');
                 backgroundImage.classList.add('show');
             }, 1500);
-            
-            // Remove o container do coração após a animação
             setTimeout(() => {
                 heartContainer.style.display = 'none';
             }, 2000);
         }
-
-        // Efeito de batimento do coração ao passar o mouse (desktop)
         heartContainer.addEventListener('mouseenter', () => {
             if (!hasBeenClicked) {
                 heart.classList.add('beating');
@@ -249,27 +227,21 @@
             heart.classList.remove('beating');
         });
 
-        // Evento de clique para desktop
         heartContainer.addEventListener('click', (e) => {
             e.preventDefault();
             triggerAnimation();
         });
-
-        // Eventos de toque para mobile
         heartContainer.addEventListener('touchstart', (e) => {
             e.preventDefault();
             if (!hasBeenClicked) {
                 heart.classList.add('beating');
             }
         });
-
         heartContainer.addEventListener('touchend', (e) => {
             e.preventDefault();
             heart.classList.remove('beating');
             triggerAnimation();
         });
-
-        // Previne o zoom no duplo toque (iOS)
         heartContainer.addEventListener('touchmove', (e) => {
             e.preventDefault();
         });
