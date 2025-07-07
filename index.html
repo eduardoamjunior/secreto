@@ -25,6 +25,10 @@
             position: relative;
             cursor: pointer;
             z-index: 10;
+            padding: 20px;
+            /* Aumenta a área clicável */
+            -webkit-tap-highlight-color: transparent;
+            /* Remove o highlight azul no iOS */
         }
 
         .heart {
@@ -35,11 +39,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            pointer-events: none;
+            /* Evita conflitos de eventos */
         }
 
         .heart svg {
             width: 100%;
             height: 100%;
+            pointer-events: none;
         }
 
         .heart.beating {
@@ -144,6 +151,11 @@
             .nickname {
                 font-size: 2rem;
             }
+            
+            .heart-container {
+                padding: 30px;
+                /* Área ainda maior para mobile */
+            }
         }
     </style>
 </head>
@@ -178,6 +190,9 @@
             "Gatinha",
         ];
 
+        // Variável para controlar se já foi clicado
+        let hasBeenClicked = false;
+
         // Função para obter saudação baseada no horário
         function getGreeting() {
             const hour = new Date().getHours();
@@ -196,17 +211,11 @@
             return nicknames[Math.floor(Math.random() * nicknames.length)];
         }
 
-        // Efeito de batimento do coração ao passar o mouse
-        heartContainer.addEventListener('mouseenter', () => {
-            heart.classList.add('beating');
-        });
-
-        heartContainer.addEventListener('mouseleave', () => {
-            heart.classList.remove('beating');
-        });
-
-        // Animação principal ao clicar
-        heartContainer.addEventListener('click', () => {
+        // Função principal que executa a animação
+        function triggerAnimation() {
+            if (hasBeenClicked) return;
+            hasBeenClicked = true;
+            
             // Remove o cursor pointer
             heartContainer.style.cursor = 'default';
             
@@ -227,17 +236,42 @@
             setTimeout(() => {
                 heartContainer.style.display = 'none';
             }, 2000);
+        }
+
+        // Efeito de batimento do coração ao passar o mouse (desktop)
+        heartContainer.addEventListener('mouseenter', () => {
+            if (!hasBeenClicked) {
+                heart.classList.add('beating');
+            }
         });
 
-        // Adiciona efeito de toque para mobile
+        heartContainer.addEventListener('mouseleave', () => {
+            heart.classList.remove('beating');
+        });
+
+        // Evento de clique para desktop
+        heartContainer.addEventListener('click', (e) => {
+            e.preventDefault();
+            triggerAnimation();
+        });
+
+        // Eventos de toque para mobile
         heartContainer.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            heart.classList.add('beating');
+            if (!hasBeenClicked) {
+                heart.classList.add('beating');
+            }
         });
 
         heartContainer.addEventListener('touchend', (e) => {
             e.preventDefault();
             heart.classList.remove('beating');
+            triggerAnimation();
+        });
+
+        // Previne o zoom no duplo toque (iOS)
+        heartContainer.addEventListener('touchmove', (e) => {
+            e.preventDefault();
         });
     </script>
 </body>
